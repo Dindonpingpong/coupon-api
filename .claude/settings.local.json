@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:dindonpingpong.github.io)",
+      "Bash(bun init -y)",
+      "Bash(export PATH=\"$HOME/.bun/bin:$PATH\")",
+      "Bash(bun --version)",
+      "Bash(bun add express)",
+      "Bash(bun add -d @types/express)",
+      "Bash(bun add pg)",
+      "Bash(bun add -d @types/pg)"
+    ]
+  }
+}
