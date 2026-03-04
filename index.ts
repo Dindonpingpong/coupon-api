@@ -4,6 +4,19 @@ import pg from "pg";
 const { Pool } = pg;
 
 const app = express();
+
+// CORS
+app.use((_req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, x-vercel-protection-bypass");
+  if (_req.method === "OPTIONS") {
+    res.sendStatus(204);
+    return;
+  }
+  next();
+});
+
 app.use(express.json());
 
 const pool = new Pool({
