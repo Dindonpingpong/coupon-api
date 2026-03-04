@@ -44,6 +44,16 @@ function formatDate(date: Date): string {
   );
 }
 
+// Init tables on first request
+let dbReady = false;
+app.use(async (_req, _res, next) => {
+  if (!dbReady) {
+    await initDb();
+    dbReady = true;
+  }
+  next();
+});
+
 // POST /coupons/v1/coupon/create
 app.post("/coupons/v1/coupon/create", async (req, res) => {
   try {
@@ -168,16 +178,6 @@ app.post("/coupons/v1/coupon/activate", async (req, res) => {
 app.get('/healthz', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() })
 })
-
-// Init tables on first request
-let dbReady = false;
-app.use(async (_req, _res, next) => {
-  if (!dbReady) {
-    await initDb();
-    dbReady = true;
-  }
-  next();
-});
 
 // Local dev
 if (process.env.NODE_ENV !== "production") {
