@@ -165,10 +165,26 @@ app.post("/coupons/v1/coupon/activate", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+app.get('/healthz', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() })
+})
 
-initDb().then(() => {
+// Init tables on first request
+let dbReady = false;
+app.use(async (_req, _res, next) => {
+  if (!dbReady) {
+    await initDb();
+    dbReady = true;
+  }
+  next();
+});
+
+// Local dev
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Coupon API running on port ${PORT}`);
   });
-});
+}
+
+export default app;
