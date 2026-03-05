@@ -1,5 +1,7 @@
 import express from "express";
 import pg from "pg";
+import swaggerUi from "swagger-ui-express";
+import swaggerDoc from "./swagger.json";
 
 const { Pool } = pg;
 
@@ -18,6 +20,7 @@ app.use((_req, res, next) => {
 });
 
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

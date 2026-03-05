@@ -1,0 +1,142 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Coupon API",
+    "version": "1.0.0",
+    "description": "API for creating and activating discount coupons"
+  },
+  "paths": {
+    "/coupons/v1/coupon/create": {
+      "post": {
+        "summary": "Create a coupon",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCouponRequest"
+              },
+              "example": {
+                "orgId": "org-1",
+                "title": "SALE20",
+                "amount": 500,
+                "currency": "USD",
+                "validSince": "2026-03-04 00:00:00",
+                "validUntil": "2026-04-04 00:00:00"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCouponSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coupons/v1/coupon/activate": {
+      "post": {
+        "summary": "Activate a coupon",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateCouponRequest"
+              },
+              "example": {
+                "orgId": "org-1",
+                "userId": "12345",
+                "ip": "46.4.228.3",
+                "data": {
+                  "title": "SALE20"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/ActivateSuccessResponse" },
+                    { "$ref": "#/components/schemas/ActivateErrorResponse" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateCouponRequest": {
+        "type": "object",
+        "required": ["orgId", "title", "amount", "currency", "validSince", "validUntil"],
+        "properties": {
+          "orgId": { "type": "string", "description": "Organization ID" },
+          "title": { "type": "string", "maxLength": 6, "description": "Coupon code (max 6 chars)" },
+          "amount": { "type": "integer", "minimum": 0, "maximum": 9999, "description": "Discount amount (max 4 digits)" },
+          "currency": { "type": "string", "description": "Currency code (e.g. USD)" },
+          "validSince": { "type": "string", "description": "Start date (YYYY-MM-DD HH:mm:ss)" },
+          "validUntil": { "type": "string", "description": "End date (YYYY-MM-DD HH:mm:ss)" }
+        }
+      },
+      "CreateCouponSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "id": { "type": "integer" },
+          "orgId": { "type": "string" },
+          "title": { "type": "string" },
+          "amount": { "type": "integer" },
+          "currency": { "type": "string" },
+          "createdAt": { "type": "string" },
+          "validSince": { "type": "string" },
+          "validUntil": { "type": "string" }
+        }
+      },
+      "ActivateCouponRequest": {
+        "type": "object",
+        "required": ["orgId", "userId", "ip", "data"],
+        "properties": {
+          "orgId": { "type": "string", "description": "Organization ID" },
+          "userId": { "type": "string", "description": "User ID" },
+          "ip": { "type": "string", "description": "User IP address" },
+          "data": {
+            "type": "object",
+            "required": ["title"],
+            "properties": {
+              "title": { "type": "string", "description": "Coupon code to activate" }
+            }
+          }
+        }
+      },
+      "ActivateSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true }
+        }
+      },
+      "ActivateErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "error": { "type": "string", "enum": ["alreadyActivated", "internal error"] }
+        }
+      }
+    }
+  }
+}
