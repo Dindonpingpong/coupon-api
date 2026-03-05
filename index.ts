@@ -1,6 +1,5 @@
 import express from "express";
 import pg from "pg";
-import swaggerUi from "swagger-ui-express";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -26,7 +25,24 @@ app.use((_req, res, next) => {
 });
 
 app.use(express.json());
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
+// Swagger JSON endpoint
+app.get("/swagger.json", (_req, res) => {
+  res.json(swaggerDoc);
+});
+
+// Swagger UI via CDN
+app.get("/api-docs", (_req, res) => {
+  res.send(`<!DOCTYPE html>
+<html><head>
+  <title>Coupon API</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+</head><body>
+  <div id="swagger-ui"></div>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>SwaggerUIBundle({ url: "/swagger.json", dom_id: "#swagger-ui" })</script>
+</body></html>`);
+});
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

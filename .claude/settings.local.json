@@ -10,7 +10,8 @@
       "Bash(bun add pg)",
       "Bash(bun add -d @types/pg)",
       "Bash(bun add swagger-ui-express)",
-      "Bash(bun add -d @types/swagger-ui-express)"
+      "Bash(bun add -d @types/swagger-ui-express)",
+      "Bash(bun remove swagger-ui-express @types/swagger-ui-express)"
     ]
   }
 }
