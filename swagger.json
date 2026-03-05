@@ -3,12 +3,13 @@
   "info": {
     "title": "Coupon API",
     "version": "1.0.0",
-    "description": "API for creating and activating discount coupons"
+    "description": "API for creating and activating discount coupons with QA check tracking"
   },
   "paths": {
     "/coupons/v1/coupon/create": {
       "post": {
         "summary": "Create a coupon",
+        "tags": ["Coupons"],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,6 +45,7 @@
     "/coupons/v1/coupon/activate": {
       "post": {
         "summary": "Activate a coupon",
+        "tags": ["Coupons"],
         "requestBody": {
           "required": true,
           "content": {
@@ -72,6 +74,33 @@
                     { "$ref": "#/components/schemas/ActivateSuccessResponse" },
                     { "$ref": "#/components/schemas/ActivateErrorResponse" }
                   ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coupons/v1/checks/{orgId}": {
+      "get": {
+        "summary": "Get QA check results for an organization",
+        "tags": ["Checks"],
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Organization ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Check results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecksResponse"
                 }
               }
             }
@@ -135,6 +164,40 @@
         "properties": {
           "success": { "type": "boolean", "example": false },
           "error": { "type": "string", "enum": ["alreadyActivated", "internal error"] }
+        }
+      },
+      "ChecksResponse": {
+        "type": "object",
+        "properties": {
+          "orgId": { "type": "string" },
+          "total": { "type": "integer", "description": "Total number of possible checks" },
+          "passed": { "type": "integer", "description": "Number of checks detected" },
+          "missing": { "type": "integer", "description": "Number of checks not yet detected" },
+          "checks": {
+            "type": "object",
+            "properties": {
+              "create": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "passed": { "type": "boolean" }
+                  }
+                }
+              },
+              "activate": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "passed": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
