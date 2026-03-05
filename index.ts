@@ -1,7 +1,13 @@
 import express from "express";
 import pg from "pg";
 import swaggerUi from "swagger-ui-express";
-import swaggerDoc from "./swagger.json";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const swaggerDoc = JSON.parse(readFileSync(join(__dirname, "swagger.json"), "utf-8"));
 
 const { Pool } = pg;
 
